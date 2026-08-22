@@ -54,13 +54,13 @@ $$\lambda = 1 + \ln(1 + e^s)$$
 This ensures that the proposed activation function retains the core signal-preserving and noise-filtering properties of standard rectified units, effectively filtering out significant negative noise while preserving strong positive signals.  
 
 ## 📈 Methodology and Model Evaluation
+The data gathered in this study will be analyzed by examining both the mathematical behavior and experimental performance of the proposed MP-GELU activation function. The analysis focuses on several key factors:
 
-The data gathered in this study will be analyzed by examining both the mathematical behavior and experimental performance of the proposed MP-GELU activation function. The analysis focuses on several key factors:  
-* **Continuous Differentiability**: Standard calculus techniques are used to derive the first-order derivative and verify whether the function and its derivative remain continuous across the input domain.
+*   **Continuous Differentiability:** Standard calculus techniques are used to derive the first-order derivative and verify whether the function and its derivative remain continuous across the input domain.
 
-* **Gradient Stability**: Gradient stability is assessed through the analysis of the derivative to identify possible occurrences of vanishing gradients, exploding gradients, or inactive region.
+*   **Asymptotic Behavior Analysis:** The asymptotic behavior of the proposed activation function is examined at its extremes to demonstrate that it retains the core signal-preserving and noise-filtering properties of standard rectified units. This mathematical analysis proves that the function maintains an asymptotically linear mapping for large positive inputs, while providing a soft-gating collapse for large negative inputs to induce network sparsity without causing dead neurons.
 
-* **Learning Performance & Convergence**: Neural network simulations are conducted to compare MP-GELU against standard GELU, ReLU, and the newly implemented PGELU baselines[cite: 2]. The rate at which the network reaches stable learning states is examined using training and validation loss curves.
+*   **Learning Performance & Convergence:** Neural network simulations are conducted to compare MP-GELU against standard GELU, ReLU, and the newly implemented PGELU baselines. The rate at which the network reaches stable learning states is examined using training and validation loss curves.
 
 ## 📝 How to Cite
 If you utilize this codebase, mathematical derivation, or PyTorch implementation in your own research or projects, please cite this repository:
