@@ -74,14 +74,14 @@ The data gathered in this study will be analyzed by examining both the mathemati
 If you utilize this codebase, mathematical derivation, or PyTorch implementation in your own research or projects, please cite this repository:
 
 **APA Format:**
-> De Los Santos, J. A. E. (2026). Modified Parameterized Gaussian Error Linear Unit (MP-GELU). GitHub. https://github.com/Ariestootl/MPGELUBibTeX:
+> De Los Santos, J. A. E. (2026). Modified Parameterized Gaussian Error Linear Unit (MP-GELU) Demonstration. GitHub. https://github.com/Ariestootl/MPGELUBibTeX:
 
 **BibTex:**
 
 ```bibtex
 @software{delossantos2026mpgelu,
   author = {De Los Santos, Jose Aries E.},
-  title = {Modified Parameterized Gaussian Error Linear Unit (MP-GELU)},
+  title = {Modified Parameterized Gaussian Error Linear Unit (MP-GELU) Demonstration},
   year = {2026},
   publisher = {GitHub},
   journal = {GitHub repository},
