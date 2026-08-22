@@ -1,6 +1,6 @@
 
 import torch as torch
-import numpy as np
+import math
 
 class MPGELU(torch.nn.Module):
     '''
@@ -16,7 +16,7 @@ class MPGELU(torch.nn.Module):
             lam = 1.0 + torch.nn.functional.softplus(self.initial_s)
         else:
             lam = 1.0 + torch.log(torch.tensor(1.0, device=x.device) + torch.exp(self.initial_s))
-        output = torch.mul(0.5 * x, (1.0 + torch.erf(torch.mul(lam,x)/ (np.sqrt(2)))))
+        output = torch.mul(0.5 * x, (1.0 + torch.erf(torch.mul(lam,x)/ (math.sqrt(2)))))
         return output
         
 
