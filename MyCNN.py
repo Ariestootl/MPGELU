@@ -33,7 +33,6 @@ class MyCNN(torch.nn.Module):
     
     def convo_layers(self, arch):
         Mylayers = []
-
         for k in arch:
             if type(k) == int:
                 output_channels = k
