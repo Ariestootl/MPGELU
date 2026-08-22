@@ -46,9 +46,12 @@ Bash
 ## 📐 Mathematical Formulation
 
 The standard Gaussian Error Linear Unit (GELU) relies on the fixed variance of the standard normal distribution. To address this limitation, MP-GELU introduces a learnable scaling parameter $\lambda \ge 1$ and formulates the activation function by scaling the input within the cumulative distribution function:
+
 $$f(x) = \frac{x}{2}\left[1 + \text{erf}\left(\frac{\lambda x}{\sqrt{2}}\right)\right]$$
 
+
 To strictly enforce the $\lambda \ge 1$ lower bound during unconstrained gradient-based optimization, we introduce a parameter $s \in \mathbb{R}$ mapped through the Softplus function:
+
 $$\lambda = 1 + \ln(1 + e^s)$$
 
 This ensures that the proposed activation function retains the core signal-preserving and noise-filtering properties of standard rectified units, effectively filtering out significant negative noise while preserving strong positive signals.  
