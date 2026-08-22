@@ -8,9 +8,14 @@
 
 ## 👥 About the Researchers
 This research project is being developed by:
+
+**Student Researchers:**
 *   **Marion Dominic Reginales**
 *   **Carl Jaeron Valmeo**
 *   **Enzo Bautista**
+
+**Qualified Scientist & Technical Adviser:**
+*   **Jose Aries E. De Los Santos**
 
 *The team operates under my technical guidance as their qualified scientist and technical adviser.* To ensure the students build a robust foundational skillset in computational science and deep learning mathematics, **I, Jose Aries E. De Los Santos, provide hands-on mentorship in mathematical analysis and software engineering**. This includes:
 *   Teaching and providing learning materials in standard calculus, which they use to assist in their mathematical analysis of the proposed activation function.
