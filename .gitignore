@@ -1,0 +1,24 @@
+
+#ignore the following files
+
+*.png
+*.jpg
+*.pkl
+*.jpeg
+*.tqlite
+*.csv
+*.pt
+*.pth
+*.tiff
+*.pdf
+*.tiff
+*.mp4
+*.npy
+*.ipynb_checkpoints
+*.pt
+*.pth
+
+#ignore the following folders
+
+MNIST/
+bby_data/
