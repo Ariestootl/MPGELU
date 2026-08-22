@@ -19,6 +19,4 @@
 *.pth
 
 #ignore the following folders
-
-MNIST/
-bby_data/
+data/
