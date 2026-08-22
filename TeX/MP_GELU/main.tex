@@ -1,0 +1,312 @@
+\documentclass[11pt]{article}
+% \usepackage[top=0.4in, bottom=0.2in, left=0.75in, right=0.75in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[pdftex]{graphicx}
+\usepackage{epsfig}
+\usepackage{amstext}
+\usepackage{amsmath}
+\usepackage{multicol}
+\usepackage[T1]{fontenc}
+\usepackage{yfonts}
+\usepackage[numbers,sort]{natbib}
+\bibliographystyle{abbrvnat}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{algorithm,algpseudocode}
+
+\usepackage{subcaption} % Required for the subfigure environment
+\usepackage{float}      % Required for the [H] positioning specifier
+\oddsidemargin -0.2in \textwidth 7in \topmargin -1in \textheight 9.25in
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+
+% \title{\textbf{Data-Driven Kernel Reconstruction and Threshold Dynamics}}
+% \author{
+%     Jose Aries E. De Los Santos \\
+%     \textit{jedelossantos1@up.edu.ph}
+% }
+% \date{April 21, 2026}
+% \begin{document}
+% \maketitle
+% \thispagestyle{empty}
+% --- MANUAL HEADER (Replacing \maketitle) ---
+
+\begin{document}
+\begin{center}
+{\LARGE \textbf{A Modified Parameterized Gaussian Error Linear Unit} \\[1em]
+{\large \textbf{Jose Aries E. De Los Santos}$^{1,2}$ \quad | \quad \textit{jedelossantos1@up.edu.ph}} \\[0.5em]
+{\normalsize 
+$^1$Institute of Mathematics, College of Science, University of the Philippines Diliman \\
+$^2$Data Science Program, College of Science, University of the Philippines Diliman}
+}
+\end{center}
+\hrule \vspace{0.5em}
+
+\section{Background}
+\begin{definition}
+The normal distribution with parameter values $\mu = 0$ and $\sigma = 1$ is called the standard normal distribution. A random variable having a standard normal distribution is called a standard normal random variable and will be denoted by $Z$. The probability density function of $Z$ is
+\begin{equation*}
+f(z) = \frac{1}{\sqrt{2\pi}}e^{-z^2/2}
+\end{equation*}
+where $z \in \mathbb{R}$. The cumulative distribution function of $Z$ is
+$$
+\mathbb{P}(Z \leq z) = \int_{-\infty}^{z} f(t)dt
+$$
+which we denote by $\Phi(z)$.
+\end{definition}
+\subsection{Gaussian Error Linear Unit (GELU) Formulation}
+\noindent We first observe the similarities between the Rectified Linear Unit (ReLU)~\cite{nair2010rectified} and the Heaviside function.
+\begin{equation*}
+\text{ReLU}(x) = \max(0, x) = 
+\begin{cases} 
+    x, & \text{if } x > 0 \\ 
+    0, & \text{if } x \leq 0 
+\end{cases}
+\qquad \text{and} \qquad
+H(x) = 
+\begin{cases} 
+    1, & \text{if } x > 0 \\ 
+    0, & \text{if } x \leq 0 
+\end{cases}
+\end{equation*}
+\noindent As seen in their definitions, the Rectified Linear Unit (ReLU) can be explicitly expressed as the input $x$ multiplied by the Heaviside step function $H(x)$, yielding $\text{ReLU}(x) = x \cdot H(x)$. This acts as a hard, deterministic gating mechanism. In contrast, regularization techniques like Dropout apply a stochastic gate, scaling the input by a random mask $m \sim \text{Bernoulli}(p)$. The stochastic dropout operation $\nu(x)$ is formulated as:
+$$
+\nu(x) = m \cdot x = 
+\begin{cases} 
+    x, & \text{with probability } p \\ 
+    0, & \text{with probability } 1 - p 
+\end{cases}
+$$
+The expected value of this stochastic transformation is $\mathbb{E}[\nu(x)] = x \cdot p + 0 \cdot (1-p) = x \cdot p$. Motivated by this, Hendrycks and Gimpel~\cite{hendrycks2023gaussianerrorlinearunits} sought to merge these paradigms by applying a zero-one mask that is stochastically determined yet strictly dependent upon the input. They defined this stochastic activation as:
+$$
+f(x) = m \cdot x
+$$
+where $m \sim \text{Bernoulli}(\Phi(x))$. Rather than dropping out neurons uniformly with a constant probability $p$, the Gaussian Error Linear Unit (GELU) defines the probability of preserving the input as a function of the input itself, specifically utilizing the standard normal cumulative distribution function. By replacing $p$ with $\Phi(x)$, GELU is mathematically formulated as the expected value of this input-dependent stochastic process: 
+$$
+\text{GELU}(x) = \mathbb{E}[m \cdot x] = x \Phi(x).
+$$
+Here, $\Phi(x)$ is the cumulative distribution function of the standard normal distribution, defined as:
+$$
+\Phi(x) = \mathbb{P}(X \leq x) = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{x} e^{-t^2/2} dt.
+$$
+This specific distribution is used because neuron inputs naturally tend to follow a normal distribution, particularly when the network applies Batch Normalization. To evaluate the cumulative distribution function, we can split $\Phi(x)$ into two distinct intervals at zero:
+\begin{equation*}
+\Phi(x) = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{x} e^{-t^2/2} dt =  \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{0} e^{-t^2/2} dt + \frac{1}{\sqrt{2\pi}} \int_{0}^{x} e^{-t^2/2} dt
+\end{equation*}
+The first term represents the left half of the probability distribution. To understand its exact value, we must first determine the total area under the foundational Gaussian curve:
+\begin{equation*}
+\int_{-\infty}^{\infty} e^{-x^2} \, dx
+\end{equation*}
+We start by squaring the integral and introducing two independent dummy variables, $x_1$ and $x_2$. Fubini's Theorem allows us to combine the product of two one-dimensional integrals into a single double integral over the entire Cartesian plane:
+\begin{align*}
+\left( \int_{-\infty}^{\infty} e^{-x^2} \, dx \right)^2 &= \left( \int_{-\infty}^{\infty} e^{-x_1^2} \, dx_1 \right) \left( \int_{-\infty}^{\infty} e^{-x_2^2} \, dx_2 \right) \\
+&= \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} e^{-(x_1^2 + x_2^2)} \, dx_1 \, dx_2
+\end{align*}
+Next, we apply a change of variables to polar coordinates. Recall that for a continuous function on a polar region, 
+\begin{equation*}
+\iint_R f(x,y) dA = \int_{\alpha}^{\beta} \int_a^b f(r\cos\theta, r\sin\theta) r \, dr \, d\theta
+\end{equation*}
+Applying the substitutions $x_1^2 + x_2^2 = r^2$ and $dx_1 \, dx_2 = r \, dr \, d\theta$, and expanding the bounds to cover the entire infinite plane ($r$ from $0$ to $\infty$ and $\theta$ from $0$ to $2\pi$), we obtain:
+\begin{equation*}
+\int_{-\infty}^{\infty} \int_{-\infty}^{\infty} e^{-(x_1^2 + x_2^2)} \, dx_1 \, dx_2 = \int_0^{2\pi} \int_0^{\infty} e^{-r^2} r \, dr \, d\theta
+\end{equation*}
+We evaluate the inner integral with respect to $r$ using a standard $u$-substitution (where $u = -r^2$ and $du = -2r \, dr$):
+\begin{align*}
+\int_0^{2\pi} \int_0^{\infty} e^{-r^2} r \, dr \, d\theta &= \int_0^{2\pi} \left[ -\frac{1}{2} e^{-r^2} \right]_{r=0}^{r=\infty} \, d\theta \\
+&= \int_0^{2\pi} \left[ 0 - \left(-\frac{1}{2}\right) \right] \, d\theta \\
+&= \int_0^{2\pi} \frac{1}{2} \, d\theta
+\end{align*}
+Evaluating the final outer integral with respect to $\theta$:
+\begin{equation*}
+\int_0^{2\pi} \frac{1}{2} \, d\theta = \left[ \frac{1}{2}\theta \right]_0^{2\pi} = \pi
+\end{equation*}
+Thus, the square of our original integral equals $\pi$. Taking the square root of both sides yields the foundational result:
+\begin{equation*}
+\left( \int_{-\infty}^{\infty} e^{-x^2} \, dx \right)^2 = \pi \implies \int_{-\infty}^{\infty} e^{-x^2} \, dx = \sqrt{\pi}
+\end{equation*}
+Now, we apply this result to find the total area under our unscaled standard normal curve:
+\begin{equation*}
+\text{Total Area} = \int_{-\infty}^{\infty} e^{-z^2/2} \, dz
+\end{equation*}
+We evaluate this using another $u$-substitution. Let $x = \frac{z}{\sqrt{2}}$, which implies $z = x\sqrt{2}$ and $dz = \sqrt{2} \, dx$. Substituting this into the integral and keeping the infinite bounds, we get:
+\begin{equation*}
+\int_{-\infty}^{\infty} e^{-x^2} (\sqrt{2} \, dx) = \sqrt{2} \int_{-\infty}^{\infty} e^{-x^2} \, dx
+\end{equation*}
+For a function to qualify as a valid probability density function, the total area under the curve must integrate to exactly $1$. Dividing the raw kernel by its total area establishes our normalization factor:
+\begin{equation*}
+\int_{-\infty}^{\infty} \dfrac{1}{\sqrt{2\pi}} e^{-z^2/2} \, dz = \dfrac{1}{\sqrt{2\pi}} \cdot \sqrt{2\pi} = 1
+\end{equation*}
+Because the curve is perfectly symmetric around zero and the total normalized area is exactly $1$, the integral of the left half (from $-\infty$ to $0$) evaluates to precisely to:
+\begin{equation*}
+\dfrac{1}{\sqrt{2\pi}} \int_{-\infty}^{0} e^{-z^2/2} \, dz = \dfrac{1}{2}
+\end{equation*}
+This allows us to resolve the first term of our split $\Phi(x)$ function, simplifying it to:
+\begin{equation*}
+\Phi(x) = \frac{1}{2} + \frac{1}{\sqrt{2\pi}} \int_{0}^{x} e^{-t^2/2} dt
+\end{equation*}
+While the integral for $\Phi(x)$ perfectly describes the theory, practical implementations in deep learning frameworks (such as PyTorch~\cite{paszke2017automatic}) rely on the Error Function:
+\begin{equation*}
+\text{erf}(z) = \dfrac{2}{\sqrt{\pi}}\int_{0}^{z} e^{-u^{2}}du
+\end{equation*}
+Let $u = \frac{t}{\sqrt{2}}$. Then, $t = u\sqrt{2}$ and $dt = \sqrt{2} \, du$. 
+For the limits of integration, we have:
+\begin{equation*}
+\begin{aligned}
+\text{If } t &= 0 \text{ then } u = 0 \\
+\text{If } t &= x \text{ then } u = \frac{x}{\sqrt{2}}
+\end{aligned}
+\end{equation*}
+Substituting this into $\frac{1}{\sqrt{2\pi}} \int_{0}^{x} e^{-t^2/2} dt$, we obtain:
+\begin{equation}
+\frac{1}{\sqrt{2\pi}} \int_{0}^{x} e^{-t^2/2} dt 
+= \frac{1}{\sqrt{2\pi}} \int_{0}^{x/\sqrt{2}} e^{-u^2} (\sqrt{2} \, du) 
+= \frac{1}{\sqrt{\pi}} \int_{0}^{x/\sqrt{2}} e^{-u^{2}} du 
+\label{gauss_int}
+\end{equation}
+And we can express~\eqref{gauss_int} as:
+\begin{equation*}
+\frac{1}{\sqrt{\pi}} \int_{0}^{x/\sqrt{2}} e^{-u^{2}} du = \frac{1}{2} \left[ \frac{2}{\sqrt{\pi}} \int_{0}^{x/\sqrt{2}} e^{-u^{2}} du \right] = \frac{1}{2}\text{erf}\left(\frac{x}{\sqrt{2}}\right) 
+\end{equation*}
+Finally, we obtain:
+\begin{equation*}
+\text{GELU}(x) = x\Phi(x) =  \frac{x}{2}\left[1 + \text{erf}\left( \frac{x}{\sqrt{2}}\right) \right]
+\end{equation*}
+\noindent The error function is a standard mathematical tool specifically built to calculate areas under Gaussian curves, and it is highly optimized at the hardware level. By rewriting our cumulative distribution function $\Phi(x)$ in terms of the error function, we can compute the exact GELU efficiently in software.
+\section{Proposed Activation Function}
+\subsection{Formulation}
+
+\noindent The standard Gaussian Error Linear Unit (GELU) relies on the fixed variance of the standard normal distribution $\mathcal{N}(0, 1)$, which limits the network's ability to adapt to varying data distributions across layers. To address this, we propose a parameterized extension by introducing a learnable scaling parameter $\lambda \geq 1$.\\
+
+\noindent To strictly enforce this lower bound during unconstrained gradient-based optimization, we introduce a parameter $s \in \mathbb{R}$ and map it through the Softplus function:
+\begin{equation*}
+\lambda = 1 + \ln(1 + e^s)
+\end{equation*}
+Using this constrained parameter, we formulate our proposed activation function by scaling the input within the cumulative distribution function:
+\begin{equation*}
+f(x) = x \Phi(\lambda x) = \dfrac{x}{2}\left[ 1 + \text{erf}\left(\dfrac{\lambda x}{\sqrt{2}}\right) \right]
+\end{equation*}
+\subsection{Gradient Formulation}
+\noindent To ensure the proposed activation function is compatible with gradient-based optimization during backpropagation. To rigorously evaluate the derivative of the cumulative distribution function, we rely on the foundational principles of calculus.
+\begin{theorem}[The First Fundamental Theorem of Calculus] 
+If $f$ is continuous on $[a,b]$, then the function $g$ defined by
+\begin{equation*}
+g(x) = \int_{a}^{x}f(t)dt \quad a \leq x \leq b
+\end{equation*}
+is continuous on $[a,b]$ and differentiable on $(a,b)$, and $g'(x) = f(x)$.
+\label{FFTC}
+\end{theorem}
+\noindent Extending Theorem~\ref{FFTC} with the Chain Rule, we have the following property: Suppose $f$ is continuous on $[a,b]$. If $v(x)$ is a differentiable function whose values lie within $[a,b]$ then,\\
+
+\noindent If
+$$
+g(x) = \displaystyle\int_{a}^{v(x)} f(t)dt
+$$
+we have
+$$
+g'(x) = \dfrac{d}{dx}\left(  \displaystyle\int_{a}^{v(x)} f(t)dt\right) = f(v(x))\dfrac{d}{dx}(v(x))
+$$
+\noindent Given our formulation, we expand the error function into its integral form:
+\begin{equation*}
+f(x) = \frac{x}{2} \left[ 1 + \text{erf}\left( \frac{\lambda x}{\sqrt{2}}\right)\right] = \frac{x}{2} + \frac{x}{\sqrt{\pi}}\int_{0}^{\lambda x / \sqrt{2}} e^{-u^{2}}du
+\end{equation*}
+Observe that $e^{-u^{2}}$ is continuous on $\mathbb{R}$, and $\frac{\lambda x}{\sqrt{2}}$ is differentiable on $\mathbb{R}$. By direct application of the product rule and Theorem~\ref{FFTC}, we compute the derivative:
+\begin{align*}
+f'(x) &= \dfrac{d}{dx}\left( \frac{x}{2} + \frac{x}{\sqrt{\pi}}\int_{0}^{\lambda x / \sqrt{2}} e^{-u^{2}}du\right)\\ 
+&= \dfrac{d}{dx}\left( \dfrac{x}{2}\right) + \dfrac{d}{dx} \left(  \frac{x}{\sqrt{\pi}}\int_{0}^{\lambda x / \sqrt{2}} e^{-u^{2}}du \right)\\
+&=   \frac{1}{2} + \frac{1}{\sqrt{\pi}}\int_{0}^{\lambda x / \sqrt{2}} e^{-u^{2}}du + \frac{x}{\sqrt{\pi}}\frac{d}{dx}\int_{0}^{\lambda x / \sqrt{2}} e^{-u^{2}}du \\
+&=   \frac{1}{2} + \frac{1}{\sqrt{\pi}}\int_{0}^{\lambda x / \sqrt{2}} e^{-u^{2}}du + \frac{x}{\sqrt{\pi}}e^{-(\lambda x)^{2} / 2}\left(\frac{\lambda}{\sqrt{2}}\right)
+\end{align*}
+\noindent which shows that the proposed activation function, $f(x)$, is continuously differentiable in $\mathbb{R}$.
+\subsection{Asymptotic Behavior}
+\noindent To demonstrate that the proposed activation function retains the core signal-preserving and noise-filtering properties of standard rectified units, we analyze its asymptotic behavior at the extremes.\\ 
+
+\noindent First, we examine the behavior for large positive inputs. Given that our scaling parameter is strictly positive ($\lambda \geq 1$), as $x \to \infty$, the argument of the error function approaches $\infty$. By definition, the limit of the error function as its argument approaches $\infty$ is $1$. Evaluating the limit of our formulation:
+\begin{align*}
+\lim_{x \to \infty} f(x) &= \lim_{x \to \infty} \left( \frac{x}{2} \left[ 1 + \text{erf}\left( \frac{\lambda x}{\sqrt{2}} \right) \right] \right) \\
+&= \left( \lim_{x \to \infty} \frac{x}{2} \right) \cdot \left( \lim_{x \to \infty} \left[ 1 + \frac{2}{\sqrt{\pi}} \int_{0}^{\lambda x / \sqrt{2}} e^{-u^2} du \right] \right) \\
+&= \infty \cdot \left[ 1 + \frac{2}{\sqrt{\pi}} \int_{0}^{\infty} e^{-u^2} du \right] \\
+&= \infty \cdot \left[ 1 + \frac{2}{\sqrt{\pi}} \left( \frac{\sqrt{\pi}}{2} \right) \right] \quad \left(\text{since } \int_{0}^{\infty} e^{-u^2} du = \frac{\sqrt{\pi}}{2}\right) \\
+&= \infty \cdot (1 + 1) \\
+&= \infty
+\end{align*}
+\noindent Because our function is defined as 
+\begin{equation*}
+f(x) = x\Phi(\lambda x)
+\quad\Longrightarrow\quad
+\frac{f(x)}{x} = \Phi(\lambda x),
+\end{equation*}
+where $x \neq 0$ for sufficiently large $x$ as $x \rightarrow +\infty$.
+Since $\lambda \geq 1$, we have $\lambda x \rightarrow +\infty$, and hence
+$\Phi(\lambda x) \rightarrow 1$. Therefore,
+\begin{equation*}
+\lim_{x\rightarrow +\infty}\frac{f(x)}{x}
+=
+\lim_{x\rightarrow +\infty}\Phi(\lambda x)
+= 1.
+\end{equation*}
+Thus, $f(x) \sim x$ as $x \rightarrow +\infty$.\\
+
+\noindent Although $\lim_{x\rightarrow+\infty}f(x)=+\infty$, the stronger result
+$f(x)\sim x$ shows that the proposed activation is asymptotically linear
+with unit slope on the positive domain. This is consistent with the
+advantages of rectifier activations discussed by Glorot et al.
+\cite{pmlr-v15-glorot11a}, who note that computation is linear on active
+paths and that gradients flow well along these paths without the
+activation-induced vanishing associated with sigmoid or $\tanh$ units.
+Thus, the positive asymptotic behavior of the proposed activation
+preserves an approximately identity-like mapping for large positive
+inputs.\\
+
+\noindent Next, we examine the behavior for large negative inputs. As $x \to -\infty$, given our scaling parameter $\lambda \geq 1$, the argument of the error function approaches $-\infty$. Evaluating the limit directly produces an indeterminate form:
+\begin{equation*}
+\lim_{x \to -\infty} \frac{x}{2} \left[ 1 + \text{erf}\left( \frac{\lambda x}{\sqrt{2}} \right) \right] \to -\infty \cdot 0
+\end{equation*}
+To resolve this, we rewrite the expression as a ratio and apply L'Hôpital's Rule~(Theorem~\ref{thm:lhospital}).
+\begin{theorem}[L'H\^opital's Rule]
+Let $f$ and $g$ be functions differentiable on an open interval $I$ containing $a$ except possibly at $a$ and $g'(x) \neq 0$ for all $x \in I \setminus \{a\}$.\\
+
+\noindent If $\displaystyle\lim_{x \to a} \frac{f(x)}{g(x)}$ is indeterminate of type $\frac{0}{0}$ or $\frac{\infty}{\infty}$, then
+$$
+\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)},
+$$
+provided $\displaystyle\lim_{x \to a} \frac{f'(x)}{g'(x)}$ exists, or is $+\infty$ or $-\infty$.
+\label{thm:lhospital}
+\end{theorem}
+\noindent By Theorem~\ref{FFTC}  
+\begin{align*}
+\frac{d}{dz}\text{erf}(z) = \dfrac{d}{dz}\left(\dfrac{2}{\sqrt{\pi}}\int_{0}^{z} e^{-t^{2}}dt\right)= \frac{2}{\sqrt{\pi}}e^{-z^2}
+\end{align*}
+\noindent It follows that,
+\begin{align*}
+\lim_{x \to -\infty} f(x) &= \lim_{x \to -\infty} \frac{1 + \text{erf}\left( \frac{\lambda x}{\sqrt{2}} \right)}{2 x^{-1}} \\
+&\overset{\text{L'HR}}{=} \lim_{x \to -\infty} \frac{ \frac{2}{\sqrt{\pi}} e^{-\frac{\lambda^2 x^2}{2}} \cdot \frac{\lambda}{\sqrt{2}} }{ -2 x^{-2} } \\
+&= \lim_{x \to -\infty} \frac{ \frac{2}{\sqrt{2\pi}} \lambda e^{-\frac{\lambda^2 x^2}{2}} }{ -\frac{2}{x^2} } \\
+&= \lim_{x \to -\infty} -\frac{\lambda}{\sqrt{2\pi}} \left( \frac{x^2}{e^{\frac{\lambda^2 x^2}{2}}} \right)
+\end{align*}
+As $x \to -\infty$, both $x^2$ and $e^{\frac{\lambda^2 x^2}{2}}$ approach $\infty$, yielding a $\frac{\infty}{\infty}$ indeterminate form. Applying L'Hôpital's Rule again:
+\begin{align*}
+\lim_{x \to -\infty} f(x) &\overset{\text{L'HR}}{=} \lim_{x \to -\infty} -\frac{\lambda}{\sqrt{2\pi}} \left( \frac{2x}{\lambda^2 x e^{\frac{\lambda^2 x^2}{2}}} \right) \\
+&= \lim_{x \to -\infty} -\frac{\lambda}{\sqrt{2\pi}} \left( \frac{2}{\lambda^2 e^{\frac{\lambda^2 x^2}{2}}} \right) \\
+&= 0
+\end{align*}
+\noindent Architecturally, the limit $\lim_{x \to -\infty} f(x) = 0$ acts as a soft-gating mechanism that induces network sparsity, similar to standard dropout. By suppressing negative inputs, it allows a Multi-Layer Perceptron (MLP) to efficiently isolate complex geometric features without activating the entire parameter space. Furthermore, because this collapse is asymptotic rather than instantaneous, it preserves a small gradient for negative values, mitigating the dead-neuron problem during optimization~\cite{pmlr-v15-glorot11a, hendrycks2023gaussianerrorlinearunits}.\\
+
+\noindent Together, these limits mathematically guarantee that the parameterized activation effectively filters out significant negative noise while preserving strong positive signals, maintaining the fundamental advantages of ReLU while providing a continuously differentiable, smooth transition space around the origin.
+
+\subsection{Non-Monotonicity and Critical Points}
+\noindent Unlike standard ReLU, which is strictly monotonic, our proposed activation function is non-monotonic, exhibiting a slight negative dip before rising asymptotically. To locate this global minimum, we set the first derivative to zero:
+\begin{equation*}
+f'(x) = \Phi(\lambda x) + \lambda x \phi(\lambda x) = 0
+\end{equation*}
+
+\noindent Solving this transcendental equation yields a unique negative critical point $x^* < 0$. This localized "negative pocket" allows the network to occasionally assign small negative values to inputs below a certain threshold, providing a soft, adaptive gating mechanism that helps regularize weights and prevent over-saturation during training.
+\bibliography{references.bib}
+\end{document}
