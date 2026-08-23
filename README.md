@@ -90,6 +90,23 @@ If you utilize this codebase, mathematical derivation, or PyTorch implementation
   howpublished = {\url{https://github.com/Ariestootl/MPGELU}}
 }
 ```
+## 🤝 Acknowledgments & Related Work
+The core mathematical formulation of the MP-GELU activation function explored in this repository independently aligns with the $\lambda$-GELU function recently proposed by Pérez-Corral et al. (2026). We highly encourage readers to review their foundational paper for further insights into controlled ReLU-ization.
+
+**Original Formulation:**
+> Pérez-Corral, C., Fernández-Hernández, A., Mestre, J. I., Dolz, M. F., & Quintana-Ortí, E. S. (2026). *$\lambda$-GELU: Learning Gating Hardness for Controlled ReLU-ization in Deep Networks*. arXiv preprint arXiv:2603.21991. https://arxiv.org/abs/2603.21991
+
+**BibTeX:**
+```bibtex
+@misc{pérezcorral2026lambdagelulearninggatinghardness,
+      title={$\lambda$-GELU: Learning Gating Hardness for Controlled ReLU-ization in Deep Networks}, 
+      author={Cristian Pérez-Corral and Alberto Fernández-Hernández and Jose I. Mestre and Manuel F. Dolz and Enrique S. Quintana-Ortí},
+      year={2026},
+      eprint={2603.21991},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={[https://arxiv.org/abs/2603.21991](https://arxiv.org/abs/2603.21991)}, 
+}
 
 ## 📚 References
 
