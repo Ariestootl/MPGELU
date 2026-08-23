@@ -107,7 +107,7 @@ The core mathematical formulation of the MP-GELU activation function explored in
       primaryClass={cs.LG},
       url={[https://arxiv.org/abs/2603.21991](https://arxiv.org/abs/2603.21991)}, 
 }
-
+```
 ## 📚 References
 
 *   Agarap, A. F. (2018). Deep learning using rectified linear units (ReLU). *arXiv*. https://arxiv.org/abs/1803.08375
