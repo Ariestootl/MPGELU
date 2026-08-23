@@ -301,12 +301,88 @@ As $x \to -\infty$, both $x^2$ and $e^{\frac{\lambda^2 x^2}{2}}$ approach $\inft
 
 \noindent Together, these limits mathematically guarantee that the parameterized activation effectively filters out significant negative noise while preserving strong positive signals, maintaining the fundamental advantages of ReLU while providing a continuously differentiable, smooth transition space around the origin.
 
-\subsection{Non-Monotonicity and Critical Points}
-\noindent Unlike standard ReLU, which is strictly monotonic, our proposed activation function is non-monotonic, exhibiting a slight negative dip before rising asymptotically. To locate this global minimum, we set the first derivative to zero:
+\subsection{First Derivative Analysis and Gradient Stability}
+\noindent To analyze the optimization dynamics and stability of our proposed activation function during backpropagation, we evaluate its first derivative obtained via differentiation rules:
 \begin{equation*}
-f'(x) = \Phi(\lambda x) + \lambda x \phi(\lambda x) = 0
+f'(x) = \Phi(\lambda x) + \lambda x \phi(\lambda x)
 \end{equation*}
 
-\noindent Solving this transcendental equation yields a unique negative critical point $x^* < 0$. This localized "negative pocket" allows the network to occasionally assign small negative values to inputs below a certain threshold, providing a soft, adaptive gating mechanism that helps regularize weights and prevent over-saturation during training.
+\noindent Let $f'(\cdot) = g(\cdot)$. Since $\lambda > 0$ by the Softplus parameterization ($\lambda = 1 + \ln(1 + e^s) \ge 1$), and the standard normal PDF is defined as $\phi(\lambda x) = \frac{1}{\sqrt{2\pi}} e^{-(\lambda x)^2/2}$.
+
+\noindent We evaluate the asymptotic limits by distributing the limit operator:
+\begin{equation*}
+\lim_{x \rightarrow \pm \infty}\left(\Phi(\lambda x) + \lambda x\phi(\lambda x)\right) = \lim_{x \rightarrow \pm \infty} \Phi(\lambda x) + \lim_{x \rightarrow \pm \infty} \lambda x\phi(\lambda x)
+\end{equation*} 
+
+\noindent \textbf{As $x \rightarrow +\infty$:}
+\begin{equation*}
+\begin{aligned}
+\lim_{x \rightarrow +\infty}\Phi(\lambda x) &= \lim_{x \rightarrow +\infty}\left(\dfrac{1}{2} + \dfrac{1}{\sqrt{\pi}}\int_{0}^{\lambda x/\sqrt{2}}e^{-u^{2}}du\right) = 1
+\end{aligned}
+\end{equation*}
+Since $\displaystyle\lim_{x \rightarrow +\infty} \lambda x\phi(\lambda x) \rightarrow \frac{\infty}{\infty}$ is indeterminate, we apply Theorem~\ref{thm:lhospital}:
+\begin{equation*}
+\begin{aligned}
+\lim_{x \rightarrow +\infty} \lambda x\phi(\lambda x) &= \lim_{x \rightarrow +\infty} \dfrac{\lambda}{\sqrt{2\pi}}\cdot\dfrac{x}{e^{(\lambda x)^2 / 2}}\\ 
+&\overset{\text{L'HR}}{=} \lim_{x \rightarrow +\infty} \dfrac{\lambda}{\sqrt{2\pi}}\cdot\dfrac{1}{\lambda^2 x e^{(\lambda x)^2 / 2}} = 0
+\end{aligned}
+\end{equation*}
+Thus, $\displaystyle\lim_{x \to +\infty} f'(x) = 1 + 0 = 1$.
+
+\vspace{0.5cm}
+
+\noindent \textbf{As $x \rightarrow -\infty$:}
+\begin{equation*}
+\begin{aligned}
+\lim_{x \rightarrow -\infty}\Phi(\lambda x) &= \lim_{x \rightarrow -\infty}\left(\dfrac{1}{2} + \dfrac{1}{\sqrt{\pi}}\int_{0}^{\lambda x/\sqrt{2}}e^{-u^{2}}du\right) = 0
+\end{aligned}
+\end{equation*}
+Similarly, $\displaystyle\lim_{x \rightarrow -\infty} \lambda x\phi(\lambda x) \rightarrow \frac{-\infty}{\infty}$ is indeterminate. Applying Theorem~\ref{thm:lhospital}:
+\begin{equation*}
+\begin{aligned}
+\lim_{x \rightarrow -\infty} \lambda x\phi(\lambda x) &= \lim_{x \rightarrow -\infty} \dfrac{\lambda}{\sqrt{2\pi}}\cdot\dfrac{x}{e^{(\lambda x)^2 / 2}}\\ 
+&\overset{\text{L'HR}}{=} \lim_{x \rightarrow -\infty} \dfrac{\lambda}{\sqrt{2\pi}}\cdot\dfrac{1}{\lambda^2 x e^{(\lambda x)^2 / 2}} = 0
+\end{aligned}
+\end{equation*}
+Thus, $\displaystyle\lim_{x \to -\infty} f'(x) = 0 + 0 = 0$.
+
+\begin{theorem}[Extreme Value Theorem]
+\label{thm:evt}
+If $f$ is continuous on a closed interval $[a,b]$, then $f$ attains an absolute maximum value $f(c)$ and an absolute minimum value $f(d)$ at some $c,d \in [a,b]$.
+\end{theorem}
+
+\noindent We need to show that $f'(x) = g(x) = \Phi(\lambda x) + \lambda x \phi(\lambda x)$ is globally bounded on $\mathbb{R}$, we leverage its continuity, asymptotic behavior, and Theorem~\ref{thm:evt}.\\
+
+\noindent Because the standard normal CDF $\Phi(\cdot)$, the linear function $x$, and the standard normal PDF $\phi(\cdot)$ are continuous everywhere, their composition and sum $f'(x)$ is continuous on the entire real line $\mathbb{R}$.\\ 
+
+\noindent From our previous asymptotic analysis, we established that:
+\begin{equation*}
+\lim_{x \to -\infty} f'(x) = 0 \quad \text{and} \quad \lim_{x \to +\infty} f'(x) = 1
+\end{equation*}
+By the definition of limits at infinity, there exists a sufficiently large real number $M > 0$ such that for all $x > M$, $f'(x)$ is bounded arbitrarily close to $1$, and for all $x < -M$, $f'(x)$ is bounded arbitrarily close to $0$. Thus, on the unbounded open intervals $(-\infty, -M)$ and $(M, +\infty)$, $f'(x)$ is bounded.\\
+
+\noindent Within the finite closed interval $[-M, M]$, $f'(x)$ is continuous. By the Extreme Value Theorem (Theorem~\ref{thm:evt}), $f'(x)$ must attain an absolute maximum and minimum within $[-M, M]$, guaranteeing it is bounded on this closed interval.\\
+
+\noindent Since $f'(x)$ is bounded on the closed interval $[-M, M]$ and is constrained by finite limits on the external regions $(-\infty, -M)$ and $(M, +\infty)$, it follows that $f'(x)$ is strictly bounded for all $x \in \mathbb{R}$. Because
+$$
+\displaystyle\lim_{x \to -\infty} f'(x) = 0 \text{ and } \displaystyle\lim_{x \to +\infty} f'(x) = 1$$
+the function cannot escape to infinity in either direction. Thus, there exist a constant $K > 0$ such that:
+\begin{equation*}
+\lvert f'(x) \rvert \le K \quad \forall x \in \mathbb{R}
+\end{equation*}
+This bounded derivative guarantees that MPGELU maintains gradient stability, mathematically ensuring that error signals do not compound exponentially and preventing the exploding gradient problem during backpropagation.\\
+
+\vspace{0.5cm}
+
+\noindent While the bounded derivative $|f'(x)| \le K$ prevents gradient explosion, we must also ensure that gradients do not vanish. Vanishing gradients typically occur under two conditions: saturation at large positive values (as seen in Sigmoid or Tanh) and dead zones near the origin (as seen in standard ReLU).\\
+
+\noindent Modern neural networks initialize weights using zero-mean distributions, concentrating early pre-activation values near the origin ($x \approx 0$). In standard ReLU, inputs slightly below zero receive a gradient of exactly $0$, risking permanent deactivation. Evaluating the MPGELU derivative at the origin yields:
+\begin{equation*}
+f'(0) = \Phi(0) + 0 \cdot \phi(0) = 0.5
+\end{equation*}
+\noindent Because $f'(0) > 0$, MP-GELU guarantees active gradient flow right from initialization. This non-zero derivative at the origin effectively avoids the "dying neuron" pathology, ensuring continuous and stable learning updates.
+
+
+
 \bibliography{references.bib}
 \end{document}
