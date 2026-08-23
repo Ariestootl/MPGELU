@@ -68,6 +68,8 @@ The data gathered in this study will be analyzed by examining both the mathemati
 
 *   **Asymptotic Behavior Analysis:** The asymptotic behavior of the proposed activation function is examined at its extremes to demonstrate that it retains the core signal-preserving and noise-filtering properties of standard rectified units. This mathematical analysis proves that the function maintains an asymptotically linear mapping for large positive inputs, while providing a soft-gating collapse for large negative inputs to induce network sparsity without causing dead neurons.
 
+* **Gradient Stability:** First derivative analysis is applied to rigorously evaluate backpropagation stability. By computing asymptotic limits and invoking the Extreme Value Theorem, the derivative is proven to be strictly bounded ($\lvert f'(x) \rvert \le K$ for a constant $K >0$) to prevent the exploding gradient problem. Additionally, evaluating the non-zero derivative at the origin ($f'(0) > 0$) guarantees active signal flow, preventing vanishing gradients and the dying neuron pathology.
+
 *   **Learning Performance & Convergence:** Neural network simulations are conducted to compare MP-GELU against standard GELU, ReLU, and the newly implemented PGELU baselines. The rate at which the network reaches stable learning states is examined using training and validation loss curves.
 
 ## 📝 How to Cite
