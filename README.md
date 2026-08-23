@@ -27,7 +27,7 @@ Through this guidance, I am equipping these students to bridge the gap between t
 ## 🧠 Project Overview
 Activation functions play a crucial role in deep neural networks because their mathematical properties directly influence gradient propagation, training stability, and model convergence. Smooth activation functions allow gradients to change continuously, reducing abrupt changes in parameter updates. 
 
-This project introduces a Modified Parameterized Gaussian Error Linear Unit (MPGELU), positioning it as an adaptive extension of P-GELU rather than a fundamentally different activation paradigm. The modification aims to preserve the smoothness and continuous differentiability of P-GELU while introducing a formulation that provides more controlled gradient behavior. By characterizing these properties theoretically, the proposed function can be evaluated not only on empirical performance but also on whether its gradients remain within a desirable and controllable range during neural network training.
+This project investigates a Modified Parameterized Gaussian Error Linear Unit (MPGELU), positioning it as an adaptive extension of P-GELU and aligns with $\lambda$-GELU rather than a fundamentally different activation paradigm. The modification aims to preserve the smoothness and continuous differentiability of P-GELU while introducing a formulation that provides more controlled gradient behavior. By characterizing these properties theoretically, the proposed function can be evaluated not only on empirical performance but also on whether its gradients remain within a desirable and controllable range during neural network training.
 
 ## 🗂️ Repository Structure
 ```text
