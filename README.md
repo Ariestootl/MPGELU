@@ -4,7 +4,7 @@
 
 *   **School:** Parañaque Science High School
 *   **Category:** Mathematics and Computational Science  
-*   **Level:** Senior High School (STEM)
+*   **Level:** Junior High School (STEM)
 
 ## 👥 About the Researchers
 This research project is being developed by:
