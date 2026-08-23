@@ -180,19 +180,20 @@ Finally, we obtain:
 \text{GELU}(x) = x\Phi(x) =  \frac{x}{2}\left[1 + \text{erf}\left( \frac{x}{\sqrt{2}}\right) \right]
 \end{equation*}
 \noindent The error function is a standard mathematical tool specifically built to calculate areas under Gaussian curves, and it is highly optimized at the hardware level. By rewriting our cumulative distribution function $\Phi(x)$ in terms of the error function, we can compute the exact GELU efficiently in software.
-\section{Proposed Activation Function}
-\subsection{Formulation}
+\section{MPGELU Formulation}
 
-\noindent The standard Gaussian Error Linear Unit (GELU) relies on the fixed variance of the standard normal distribution $\mathcal{N}(0, 1)$, which limits the network's ability to adapt to varying data distributions across layers. To address this, we propose a parameterized extension by introducing a learnable scaling parameter $\lambda \geq 1$.\\
+\noindent The standard Gaussian Error Linear Unit (GELU) relies on the fixed variance of the standard normal distribution $\mathcal{N}(0, 1)$, which limits the network's ability to adapt to varying data distributions across layers. To address this, we investigate a parameterized extension that introduces a learnable scaling parameter $\lambda \geq 1$. This formulation independently aligns with the recently proposed $\lambda$-GELU activation function \cite{perezcorral2026lambdagelu}.\\
 
-\noindent To strictly enforce this lower bound during unconstrained gradient-based optimization, we introduce a parameter $s \in \mathbb{R}$ and map it through the Softplus function:
+\noindent To strictly enforce this lower bound during unconstrained gradient-based optimization, the parameter $s \in \mathbb{R}$ is introduced and map it through the Softplus function:
 \begin{equation*}
 \lambda = 1 + \ln(1 + e^s)
 \end{equation*}
-Using this constrained parameter, we formulate our proposed activation function by scaling the input within the cumulative distribution function:
+
+\noindent Using this constrained parameter, the activation function is formulated by scaling the input within the cumulative distribution function:
 \begin{equation*}
 f(x) = x \Phi(\lambda x) = \dfrac{x}{2}\left[ 1 + \text{erf}\left(\dfrac{\lambda x}{\sqrt{2}}\right) \right]
 \end{equation*}
+
 \subsection{Gradient Formulation}
 \noindent To ensure the proposed activation function is compatible with gradient-based optimization during backpropagation. To rigorously evaluate the derivative of the cumulative distribution function, we rely on the foundational principles of calculus.
 \begin{theorem}[The First Fundamental Theorem of Calculus] 
