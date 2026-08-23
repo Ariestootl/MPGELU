@@ -98,14 +98,14 @@ The core mathematical formulation of the MP-GELU activation function explored in
 
 **BibTeX:**
 ```bibtex
-@misc{pérezcorral2026lambdagelulearninggatinghardness,
+@misc{perezcorral2026lambdagelu,
       title={$\lambda$-GELU: Learning Gating Hardness for Controlled ReLU-ization in Deep Networks}, 
-      author={Cristian Pérez-Corral and Alberto Fernández-Hernández and Jose I. Mestre and Manuel F. Dolz and Enrique S. Quintana-Ortí},
+      author={Cristian P{\'e}rez-Corral and Alberto Fern{\'a}ndez-Hern{\'a}ndez and Jose I. Mestre and Manuel F. Dolz and Enrique S. Quintana-Ort{\'i}},
       year={2026},
       eprint={2603.21991},
       archivePrefix={arXiv},
       primaryClass={cs.LG},
-      url={[https://arxiv.org/abs/2603.21991](https://arxiv.org/abs/2603.21991)}, 
+      url={https://arxiv.org/abs/2603.21991}
 }
 ```
 ## 📚 References
