@@ -42,11 +42,11 @@ This project introduces a Modified Parameterized Gaussian Error Linear Unit (MP-
 └── README.md                 # Project documentation and methodology
 ```
 
-## 🚀 Getting Started
+<!-- ## 🚀 Getting Started
 To replicate this environment and run the predictive models locally, ensure you have Python 3.8+ installed, then clone the repository:
 
 Bash
-``git clone [https://github.com/Ariestootl/MPGELU.git](https://github.com/Ariestootl/MPGELU.git)``
+``git clone https://github.com/Ariestootl/MPGELU.git](https://github.com/Ariestootl/MPGELU.git)`` -->
 
 ## 📐 Mathematical Formulation
 
