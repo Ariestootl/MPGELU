@@ -27,7 +27,9 @@ Through this guidance, I am equipping these students to bridge the gap between t
 ## 🧠 Project Overview
 Activation functions play a crucial role in deep neural networks because their mathematical properties directly influence gradient propagation, training stability, and model convergence. Smooth activation functions allow gradients to change continuously, reducing abrupt changes in parameter updates. 
 
-This project investigates a Modified Parameterized Gaussian Error Linear Unit (MPGELU), positioning it as an adaptive extension of P-GELU and aligns with $\lambda$-GELU rather than a fundamentally different activation paradigm. The modification aims to preserve the smoothness and continuous differentiability of P-GELU while introducing a formulation that provides more controlled gradient behavior. By characterizing these properties theoretically, the MPGELU activation function can be evaluated not only on empirical performance but also on whether its gradients remain within a desirable and controllable range during neural network training.
+This project investigates a Modified Parameterized Gaussian Error Linear Unit (MPGELU), positioning it as an adaptive extension of P-GELU that independently aligns with the recently proposed $\lambda$-GELU (Pérez-Corral et al., 2026), rather than introducing a fundamentally different activation paradigm. 
+
+Our investigation focuses on the rigorous mathematical foundations of this formulation. The modification aims to preserve the smoothness and continuous differentiability of standard GELU while introducing a controlled gating mechanism. By characterizing these properties using single-variable calculus, specifically analyzing asymptotic behavior and bounding the derivative via the Extreme Value Theorem—MPGELU is evaluated not only on empirical performance but on mathematically guaranteeing that its gradients remain within a strictly stable range to prevent exploding or vanishing signals during neural network training.
 
 ## 🗂️ Repository Structure
 ```text
