@@ -27,7 +27,7 @@ Through this guidance, I am equipping these students to bridge the gap between t
 ## 🧠 Project Overview
 Activation functions play a crucial role in deep neural networks because their mathematical properties directly influence gradient propagation, training stability, and model convergence. Smooth activation functions allow gradients to change continuously, reducing abrupt changes in parameter updates. 
 
-This project investigates a Modified Parameterized Gaussian Error Linear Unit (MPGELU), positioning it as an adaptive extension of P-GELU and aligns with $\lambda$-GELU rather than a fundamentally different activation paradigm. The modification aims to preserve the smoothness and continuous differentiability of P-GELU while introducing a formulation that provides more controlled gradient behavior. By characterizing these properties theoretically, the proposed function can be evaluated not only on empirical performance but also on whether its gradients remain within a desirable and controllable range during neural network training.
+This project investigates a Modified Parameterized Gaussian Error Linear Unit (MPGELU), positioning it as an adaptive extension of P-GELU and aligns with $\lambda$-GELU rather than a fundamentally different activation paradigm. The modification aims to preserve the smoothness and continuous differentiability of P-GELU while introducing a formulation that provides more controlled gradient behavior. By characterizing these properties theoretically, the MPGELU activation function can be evaluated not only on empirical performance but also on whether its gradients remain within a desirable and controllable range during neural network training.
 
 ## 🗂️ Repository Structure
 ```text
@@ -55,18 +55,18 @@ The standard Gaussian Error Linear Unit (GELU) relies on the fixed variance of t
 $$f(x) = \frac{x}{2}\left[1 + \text{erf}\left(\frac{\lambda x}{\sqrt{2}}\right)\right]$$
 
 
-To strictly enforce the $\lambda \ge 1$ lower bound during unconstrained gradient-based optimization, we introduce a parameter $s \in \mathbb{R}$ mapped through the Softplus function:
+To strictly enforce the $\lambda \ge 1$ lower bound during unconstrained gradient-based optimization, the parameter $s \in \mathbb{R}$ is introduced and mapped through the Softplus function:
 
 $$\lambda = 1 + \ln(1 + e^s)$$
 
-This ensures that the proposed activation function retains the core signal-preserving and noise-filtering properties of standard rectified units, effectively filtering out significant negative noise while preserving strong positive signals.  
+This ensures that the formulated activation function retains the core signal-preserving and noise-filtering properties of standard rectified units, effectively filtering out significant negative noise while preserving strong positive signals.  
 
 ## 📈 Methodology and Model Evaluation
-The data gathered in this study will be analyzed by examining both the mathematical behavior and experimental performance of the proposed MPGELU activation function. The analysis focuses on several key factors:
+The data gathered in this study will be analyzed by examining both the mathematical behavior and experimental performance of the MPGELU activation function. The analysis focuses on several key factors:
 
 *   **Continuous Differentiability:** Standard calculus techniques are used to derive the first-order derivative and verify whether the function and its derivative remain continuous across the input domain.
 
-*   **Asymptotic Behavior Analysis:** The asymptotic behavior of the proposed activation function is examined at its extremes to demonstrate that it retains the core signal-preserving and noise-filtering properties of standard rectified units. This mathematical analysis proves that the function maintains an asymptotically linear mapping for large positive inputs, while providing a soft-gating collapse for large negative inputs to induce network sparsity without causing dead neurons.
+*   **Asymptotic Behavior Analysis:** The asymptotic behavior of the MPGELU activation function is examined at its extremes to demonstrate that it retains the core signal-preserving and noise-filtering properties of standard rectified units. This mathematical analysis proves that the function maintains an asymptotically linear mapping for large positive inputs, while providing a soft-gating collapse for large negative inputs to induce network sparsity without causing dead neurons.
 
 * **Gradient Stability:** First derivative analysis is applied to rigorously evaluate backpropagation stability. By computing asymptotic limits and invoking the Extreme Value Theorem, the derivative is proven to be strictly bounded ($\lvert f'(x) \rvert \le K$ for a constant $K >0$) to prevent the exploding gradient problem. Additionally, evaluating the non-zero derivative at the origin ($f'(0) > 0$) guarantees active signal flow, preventing vanishing gradients and the dying neuron pathology.
 
