@@ -17,7 +17,7 @@ This research project is being developed by:
 **Qualified Scientist & Technical Adviser:**
 *   **Jose Aries E. De Los Santos**
 
-*The team operates under my technical guidance as their qualified scientist and technical adviser.* To ensure the students build a robust foundational skillset in computational science and deep learning mathematics, **I, Jose Aries E. De Los Santos, provide hands-on mentorship in mathematical analysis and software engineering**. This includes:
+*The team operates under my technical guidance as their qualified scientist and technical adviser.* To ensure the students build a robust foundational skillset in computational science and deep learning mathematics, **I, Jose Aries E. De Los Santos, provide hands-on mentorship in mathematical analysis and deep learning**. This includes:
 *   Teaching and providing learning materials in standard calculus, which they use to assist in their mathematical analysis of the proposed activation function.
 *   Providing hands-on mentoring in the PyTorch framework, NumPy, and other deep learning libraries to assist them in creating their proposed activation function.
 *   Developing and coding the baseline Parameterized GELU (PGELU) from scratch. To the best of my knowledge, there is no implementation of it available online, and no code was provided by its original authors.
