@@ -1,12 +1,10 @@
 import torch
 import os
-from typing import Iterable, Callable
+from typing import Iterable, Callable, Dict
 import sys
 from pathlib import Path
 
 ###Load our model
-from MyCNN import MyCNN
-
 from MyCNN import MyCNN
 class LoadedModel:
     def __init__(self,
