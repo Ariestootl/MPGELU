@@ -22,7 +22,8 @@ class Trainer:
 
     def train(self, data_loader: torch.utils.data.DataLoader, epoch=None):
         #Training
-        train_loss, train_acc = 0, 0
+        train_loss, train_acc = 0.0, 0.0
+        total_norm = 0.0
         #Put Data into training Mode
         self.model.train()
         for batch, (X, y) in enumerate(data_loader):
@@ -54,7 +55,7 @@ class Trainer:
 
     def test(self, data_loader: torch.utils.data.DataLoader, epoch=None):
         #Testing
-        test_loss, test_acc = 0, 0
+        test_loss, test_acc = 0.0, 0.0
         self.model.to(self.device)
         #Put Data into evaluation Mode
         self.model.eval()
