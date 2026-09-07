@@ -37,16 +37,17 @@ class Trainer:
 
             ##### ==== Calculate natin dito ang L2 norm ng gradients ng model parameters =======#
             if self.track_grad_norm:
-                total_norm = 0
+                batch_norm = 0
                 for p in self.model.parameters():
                     if p.grad is not None:
                         param_norm = p.grad.data.norm(2)
-                        total_norm += param_norm.item() ** 2
-                total_norm = total_norm ** 0.5
+                        batch_norm += param_norm.item() ** 2
+                batch_norm = batch_norm ** 0.5
+                total_norm += batch_norm
             self.optimizer.step()
         train_loss = train_loss / len(data_loader)
         train_acc = train_acc / len(data_loader)
-        total_norm = total_norm / len(data_loader) if self.track_grad_norm else None
+        total_norm = total_norm / len(data_loader) if self.track_grad_norm else None if self.track_grad_norm else None
         if epoch is not None and epoch % self.loss_steps == 0:
             print(f"Training Loss: {train_loss:.5f} | Training Accuracy: {train_acc:.5f}%")
         return train_loss, train_acc, total_norm
